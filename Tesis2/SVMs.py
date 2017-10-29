@@ -245,16 +245,7 @@ class StringKernel():
     #             shrinking=self.shrinking, tol=self.tol, cache_size=self.cache_size,
     #             coef0=self.coef0, gamma=self._gamma, epsilon=self.epsilon)
     #
-def loss(alpha,Q,y,z):
-    Z=np.diag(np.array(z))
-    parte1=np.ones((len(y),1)).T.dot(alpha)
-    i=0
-    while i<len(Q):
-        for j,list in Q:
-            alpha[i]
-        i+=1
-    parte2=-(1/2)*(alpha.T.dot(Z.T).dot(Q).dot(Z).dot(alpha))
-    return -parte1-parte2
+
 
 
 class OrdinalSM():
