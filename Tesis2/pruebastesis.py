@@ -430,8 +430,8 @@ def crearX(listaensayos, num_features):
         if ko==[]:
             continue
         X[indx,:] =ko
-
-    X[:,0]=(X[:,0])/np.std(X[:,0])
+        #Normalizo
+    X=(X-np.mean(X,0))/np.std(X,0)
 
 
 
@@ -611,6 +611,7 @@ class clasificador():
         y_out=self.clasificador.predict(X_test)
 
         return y_out
+
 
 
 
