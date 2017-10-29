@@ -641,6 +641,7 @@ el_respectivo=OrdinalSM(50)
 # frases,parrafos,palabras = extraerymmostrar(mode='todos')
 # xs,ys,matrix_reduce,matrix=LSA(frases)
 X = crearX(textos_sep,num_features=19)
+np.save('/home/luis/Tesis2/X',X)
 #
 # mr_plot=TSNE(n_components=2,random_state=np.random.rand(1))
 # ahorasi=mr_plot.fit_transform(X)
