@@ -16,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="pruebastesis.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="pruebastesis.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pruebastesis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="632" column="0" lean-forward="false" selection-start-line="632" selection-start-column="0" selection-end-line="632" selection-end-column="0" />
+            <state relative-caret-position="172">
+              <caret line="622" column="1" lean-forward="false" selection-start-line="622" selection-start-column="1" selection-end-line="622" selection-end-column="1" />
               <folding>
                 <element signature="e#0#47#0" expanded="true" />
               </folding>
@@ -64,11 +64,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SVMs.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SVMs.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SVMs.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="354">
-              <caret line="325" column="57" lean-forward="true" selection-start-line="325" selection-start-column="57" selection-end-line="325" selection-end-column="57" />
+              <caret line="325" column="57" lean-forward="false" selection-start-line="325" selection-start-column="57" selection-end-line="325" selection-end-column="57" />
               <folding>
                 <element signature="e#21#39#0" expanded="true" />
               </folding>
@@ -131,9 +131,9 @@
         <option value="$PROJECT_DIR$/more_treshholded.py" />
         <option value="$PROJECT_DIR$/Ordnilaregression.py" />
         <option value="$PROJECT_DIR$/PRank.py" />
-        <option value="$PROJECT_DIR$/pruebastesis.py" />
         <option value="$PROJECT_DIR$/Pruebas.ipynb" />
         <option value="$PROJECT_DIR$/SVMs.py" />
+        <option value="$PROJECT_DIR$/pruebastesis.py" />
       </list>
     </option>
   </component>
@@ -441,7 +441,14 @@
       <option name="project" value="LOCAL" />
       <updated>1509315572304</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Tecnicamente ya escojo los alphas, aleatoriamente, disminuyendo el conjunto de las posibles escogencias suponiendo que cuando optimizo un par estos no se descuadra">
+      <created>1509315628761</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1509315628761</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -714,16 +721,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pruebastesis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="632" column="0" lean-forward="false" selection-start-line="632" selection-start-column="0" selection-end-line="632" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#47#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Pruebas.ipynb">
       <provider selected="true" editor-type-id="ipnb-editor">
         <state>
@@ -734,9 +731,19 @@
     <entry file="file://$PROJECT_DIR$/SVMs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="354">
-          <caret line="325" column="57" lean-forward="true" selection-start-line="325" selection-start-column="57" selection-end-line="325" selection-end-column="57" />
+          <caret line="325" column="57" lean-forward="false" selection-start-line="325" selection-start-column="57" selection-end-line="325" selection-end-column="57" />
           <folding>
             <element signature="e#21#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pruebastesis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="172">
+          <caret line="622" column="1" lean-forward="false" selection-start-line="622" selection-start-column="1" selection-end-line="622" selection-end-column="1" />
+          <folding>
+            <element signature="e#0#47#0" expanded="true" />
           </folding>
         </state>
       </provider>
