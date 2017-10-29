@@ -391,23 +391,23 @@ def cost_function(X):
     return loss
 
 
-def fotros_ensayos():
+def otros_ensayos():
 
     filename = '/media/luis/Data/Universidad/Tesis (Natural language)/Training_Materials/training_set_rel3.xlsx'
 
-    archivo = pd.read_excel(filename,header=0)
-    Tabla = archivo
+    archivo = pd.ExcelFile(filename,header=0)
+    Tabla = archivo.parse(sheetname='training_set')
 
     set = np.array(Tabla['essay_set'])
     index = np.where(set > 1)[0][0]
     coso = Tabla['essay'].iloc[:index]
     y = np.array(Tabla['rater1_domain1'].iloc[:index],dtype=int)
     # Saco todos los ensayos y los pongo en un solo string
-    Textos = '\n'
-    for ensayo in coso:
-        Textos = Textos + ensayo
-
-    return Textos, list(coso), y
+    # Textos = '\n'
+    # for ensayo in coso:
+    #     Textos = Textos + ensayo
+    #
+    # return Textos, list(coso), y
 
 
 def extraer(text):

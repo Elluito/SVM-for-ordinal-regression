@@ -221,30 +221,6 @@ class StringKernel():
 
 
     #
-    # def fit(self, X, Y):
-    #     gram_matr = self.string_kernel(X, X)
-    #     self.__X = X
-    #     super(svm.SVC, self).fit(gram_matr, Y)
-    #
-
-    # def predict(self, X):
-    #     svm_type = LIBSVM_IMPL.index(self.impl)
-    #     if not self.__X:
-    #         print('You should train the model first!!!')
-    #         sys.exit(3)
-    #     else:
-    #         gram_matr_predict_new = self.string_kernel(X, self.__X)
-    #         gram_matr_predict_new = np.asarray(gram_matr_predict_new, dtype=np.float64, order='C')
-    #         return libsvm.predict(
-    #             gram_matr_predict_new, self.support_, self.support_vectors_, self.n_support_,
-    #             self.dual_coef_, self._intercept_,
-    #             self._label, self.probA_, self.probB_,
-    #             svm_type=svm_type,
-    #             kernel=self.kernel, C=self.C, nu=self.nu,
-    #             probability=self.probability, degree=self.degree,
-    #             shrinking=self.shrinking, tol=self.tol, cache_size=self.cache_size,
-    #             coef0=self.coef0, gamma=self._gamma, epsilon=self.epsilon)
-    #
 
 
 
@@ -255,6 +231,8 @@ class OrdinalSM():
 
         self.C=c
         self.sigma=2
+        self.visitados=[]
+        self.e=1e-3
 
 
     def kernel(self,x1,x2):
@@ -289,8 +267,49 @@ class OrdinalSM():
             matriz.append(temp)
         #realizo la multiplicacion
 
-    def elegir_alpha(self):
-        nada=0
+    def probar_KKT(self,alpha):
+
+        for i,a in enumerate(alpha):
+
+
+
+
+    #escojo el par de $\alpha's$ que voy a omptimizar
+    def elegir_alpha(self,alpha,X):
+        #Escojo el primer indice
+        indices=list(self.todos_los_indices-set(self.visitados))
+
+        alpha_i=None
+        alpha_j=None
+        while alpha_i==None and indices!=[]:
+            potenial_alpha = np.random.choice(indices)
+            prueba=self.Y_combs[potenial_alpha]*self.mapeo(X[potenial_alpha])
+            if alpha[potenial_alpha]==0:
+                # si la condicion de abajo se cumple significa que no cumple KKT y que es apto para optimizar
+                if prueba-1<-self.e:
+                    alpha_i=alpha[potenial_alpha]
+                    self.visitados.append(potenial_alpha)
+            elif 0<alpha[potenial_alpha] and alpha[potenial_alpha]<self.C:
+                # si la condicion de abajo se cumple significa que no cumple KKT y que es apto para optimizar
+
+                if abs(prueba-1)>self.e:
+                    alpha_i = alpha[potenial_alpha]
+                    self.visitados.append(potenial_alpha)
+            elif alpha[potenial_alpha]==self.C:
+                # si la condicion de abajo se cumple significa que no cumple KKT y que es apto para optimizar
+
+                if prueba-1>self.e:
+                    alpha_i = alpha[potenial_alpha]
+                    self.visitados.append(potenial_alpha)
+
+
+
+
+
+
+
+
+
     def ordinal_kernel(self,comb,comb2):
         #En el articu.o las entradas de la matriz son (X_i^1-X_i^2)*(X_j^1-X_j^2) (con * como producto punto) esto se traduce en productos punto que al final se reemplazan con el kernel
        return self.kernel(comb[0], comb2[0]) - self.kernel(comb[0], comb2[1]) - self.kernel(comb[1], comb2[0]) + self.kernel(comb[1], comb2[1])
@@ -315,6 +334,7 @@ class OrdinalSM():
         import itertools
         import  sys
         coso = itertools.permutations(textos, textos)
+
         y_usar = list(itertools.permutations(y, y))
         self.combs=list(coso)
         self.Y_combs=np.array(map(self.rank_diference,y_usar))
@@ -332,10 +352,11 @@ class OrdinalSM():
         combs_usar=self.combs[utiles]
         y_usar=y_usar[utiles]
         self.alpha=np.random_sample((len(y_usar),1))*self.C
+        self.todos_los_indices = set(range(0, len(self.alpha)))
 
         while o< max_iter:
 
-            i,j=self.elegir_alpha()
+            i,j=self.elegir_alpha(self.alpha)
             options=(self.alpha[i],self.alpha[j],self.Y_combs[i],self.Y_combs[j],self.combs[i],self.combs[j])
 
             s=self.Y_combs[i]*self.Y_combs[j]
@@ -343,7 +364,23 @@ class OrdinalSM():
             constrains = {'type': 'eq', 'fun': lambda x: x[0]+s*x[1]-ro}
             bounds=[(0,self.C),(0,self.C)]
             x_0=np.random_sample((2, 1)) * self.C
+
+            # Utilizo el optimizador
             alphas=optimize.minimize(self.loss,x0=x_0,args=options,constraints=constrains,bounds=bounds).x
+            #Lo hago analíticamente
+            E_i=self.mapeo(self.combs[i])-self.Y_combs[i]
+            E_j=self.mapeo(self.combs[j])-self.Y_combs[j]-self.ordinal_kernel(self.combs[i],self)
+            n=2*self.ordinal_kernel(self.combs[i],self.combs[j])-self.ordinal_kernel(self.combs[i],self.combs[i])-self.ordinal_kernel(self.combs[j],self.combs[j])
+            a_j_new=self.alpha[j]-(self.Y_combs[j]*E_i-E_j)/n
+            H=max((0,self.alpha[j]-self.alpha[i])) if self.Y_combs[i]!=self.Y_combs[j] else max((0,self.alpha[j]-self.alpha[i]-self.C))
+            L=min((self.C,self.alpha[j]-self.alpha[i])) if self.Y_combs[i]!=self.Y_combs[j] else min((self.C,self.alpha[j]+self.alpha[i]-self.C))
+            if a_j_new>=H:
+                a_j_new_clip=H
+            elif L< a_j_new and a_j_new<H :
+                a_j_new_clip=a_j_new
+            elif a_j_new<=L:
+                a_j_new_clip=L
+            a_i_new=self.alpha[i]+s*(self.alpha[j]-a_j_new_clip)
 
 
 
