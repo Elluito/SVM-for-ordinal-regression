@@ -344,7 +344,7 @@ class OrdinalSM():
 
 
     def ordinal_kernel(self,comb,comb2):
-        #En el articu.o las entradas de la matriz son (X_i^1-X_i^2)*(X_j^1-X_j^2) (con * como producto punto) esto se traduce en productos punto que al final se reemplazan con el kernel
+        #En el articuo Heibrich et al 2000 las entradas de la matriz son (X_i^1-X_i^2)*(X_j^1-X_j^2) (con * como producto punto) esto se traduce en productos punto que al final se reemplazan con el kernel
        return self.kernel(comb[0], comb2[0]) - self.kernel(comb[0], comb2[1]) - self.kernel(comb[1], comb2[0]) + self.kernel(comb[1], comb2[1])
 
     def loss(self,alpha,a_old1,a_old2,y_1,y_2,x_1,x_2):
@@ -375,15 +375,16 @@ class OrdinalSM():
 
         combinaciones=list(self.combs)
         sys.setrecursionlimit(10000)
-        Q=[]
+        
         #comparador =SubsequenceStringKernel()
-        boundes = []
-        z = []
+        
+        
        # gram_matrix=comparador.string_kernel(textos,textos)
         o = 1
-        utiles=np.where(self.Y_combs==1)[0]
-        combs_usar=self.combs[utiles]
-        y_usar=y_usar[utiles]
+        #utiles=np.where(self.Y_combs==1)[0]
+        #combs_usar=self.combs[utiles]
+        #y_usar=y_usar[utiles]
+        
         self.alpha=np.random_sample((len(y_usar),1))*self.C
         self.todos_los_indices = set(range(0, len(self.alpha)))
 
@@ -423,26 +424,7 @@ class OrdinalSM():
             if len(probar)==0:
                 o=0
             elif len(self.visitados)==len(self.alpha):
-                self.visitados=list(set(self.visitados)-set(probar))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            o+=1
-
-
+                self.visitados=list(set(self.visitados)-set(probar))       
 
         # for i, comb in enumerate(combinaciones):
         #     boundes.append((0, self.C))
@@ -456,21 +438,12 @@ class OrdinalSM():
         #     Q.append(temp)
         #     o += 1
         # constrains = {'type': 'eq', 'fun': lambda x: x.dot(np.array(z))}
-        self.alpha=optimize.minimize(loss,np.zeros((len(z),1)),(Q,y,z),bounds=boundes,constraints=constrains).x
-
+        
+        
         support_vectors=np.where(self.alpha!=0)[0]
         self.sup_vectors=self.combs[support_vectors]
         self.indx=support_vectors
-        self.Z=list(z)
-
-        # for ind in support_vectors:
-        #     temp=combinaciones[ind]
-        #     res+=self.alpha[ind]*z[ind]*comparador._K(temp[0],temp[1])
-        #
-
-
-
-
+        
 
     def mapeo(self,x):
         #x: TEXTO
