@@ -268,11 +268,40 @@ class OrdinalSM():
         #realizo la multiplicacion
 
     def probar_KKT(self,alpha):
-
+        indices_malos=[]
         for i,a in enumerate(alpha):
+            prueba=self.Y_combs[i]*self.mapeo(self.combs[i])
+            if a==0:
+                # si la condicion de abajo se cumple significa que no cumple KKT y que es apto para optimizar
+                if prueba-1<-self.e:
+                    indices_malos.append(i)
+            elif 0<a and a<self.C:
+                # si la condicion de abajo se cumple significa que no cumple KKT y que es apto para optimizar
 
+                if abs(prueba-1)>self.e:
+                    indices_malos.append(i)
 
+            elif a==self.C:
+                # si la condicion de abajo se cumple significa que no cumple KKT y que es apto para optimizar
 
+                if prueba-1>self.e:
+                    indices_malos.append(i)
+
+        return indices_malos
+    def alpha_j(self,i,posibles_indices):
+
+        E_i=self.mapeo(self.combs[i])-self.Y_combs[i]
+        max=0
+        indice=None
+
+        for j in posibles_indices:
+            if j!=i:
+                E_j=self.mapeo(self.combs[j])-self.Y_combs[j]
+                temp=E_i-E_j
+                if abs(temp)>max:
+                    max=temp
+                    indice=j
+        return indice
 
     #escojo el par de $\alpha's$ que voy a omptimizar
     def elegir_alpha(self,alpha,X):
@@ -301,6 +330,10 @@ class OrdinalSM():
                 if prueba-1>self.e:
                     alpha_i = alpha[potenial_alpha]
                     self.visitados.append(potenial_alpha)
+        alpha_j=self.alpha_j(self.visitados[-1],indices)
+
+
+        return alpha_i,alpha_i
 
 
 
