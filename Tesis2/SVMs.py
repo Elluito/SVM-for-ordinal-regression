@@ -333,7 +333,7 @@ class OrdinalSM():
         alpha_j=self.alpha_j(self.visitados[-1],indices)
 
 
-        return alpha_i,alpha_i
+        return potenial_alpha,alpha_i
 
 
 
@@ -363,7 +363,7 @@ class OrdinalSM():
 
 
 
-    def fit(self,textos,y,max_iter):
+    def fit(self,textos,y):
         import itertools
         import  sys
         coso = itertools.permutations(textos, textos)
@@ -380,14 +380,14 @@ class OrdinalSM():
         boundes = []
         z = []
        # gram_matrix=comparador.string_kernel(textos,textos)
-        o = 0
+        o = 1
         utiles=np.where(self.Y_combs==1)[0]
         combs_usar=self.combs[utiles]
         y_usar=y_usar[utiles]
         self.alpha=np.random_sample((len(y_usar),1))*self.C
         self.todos_los_indices = set(range(0, len(self.alpha)))
 
-        while o< max_iter:
+        while o!=0:
 
             i,j=self.elegir_alpha(self.alpha)
             options=(self.alpha[i],self.alpha[j],self.Y_combs[i],self.Y_combs[j],self.combs[i],self.combs[j])
@@ -414,6 +414,19 @@ class OrdinalSM():
             elif a_j_new<=L:
                 a_j_new_clip=L
             a_i_new=self.alpha[i]+s*(self.alpha[j]-a_j_new_clip)
+
+            self.alpha[i]=a_i_new
+            self.alpha[j]=a_j_new_clip
+
+            probar=self.probar_KKT(self.alpha)
+
+            if len(probar)==0:
+                o=0
+            elif len(self.visitados)==len(self.alpha):
+                self.visitados=list(set(self.visitados)-set(probar))
+
+
+
 
 
 
