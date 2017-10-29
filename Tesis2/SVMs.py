@@ -300,9 +300,19 @@ class OrdinalSM():
 
     def elegir_alpha(self):
         nada=0
+    def ordinal_kernel(self,comb,comb2):
+        #En el articu.o las entradas de la matriz son (X_i^1-X_i^2)*(X_j^1-X_j^2) (con * como producto punto) esto se traduce en productos punto que al final se reemplazan con el kernel
+       return self.kernel(comb[0], comb2[0]) - self.kernel(comb[0], comb2[1]) - self.kernel(comb[1], comb2[0]) + self.kernel(comb[1], comb2[1])
+
+    def loss(self,alpha,a_old1,a_old2,y_1,y_2,x_1,x_2):
+        comb=x_1
+        comb2=x_2
+        v_1=y_1*(self.mapeo(comb)-a_old1*y_1*(self.ordinal_kernel(comb,comb)) -a_old2*y_2*(self.ordinal_kernel(comb,comb2))  )
+        v_2=y_2*(self.mapeo(comb2)-a_old2*y_2*(self.ordinal_kernel(comb2,comb2)) -a_old1*y_1*(self.ordinal_kernel(comb,comb2)))
 
 
-    def loss(self,alpha):
+
+
 
 
 
@@ -311,8 +321,8 @@ class OrdinalSM():
     def fit(self,textos,y,max_iter):
         import itertools
         import  sys
-        coso = itertools.product(textos, textos)
-        y_usar = list(itertools.product(y, y))
+        coso = itertools.permutations(textos, textos)
+        y_usar = list(itertools.permutations(y, y))
         self.combs=list(coso)
         self.Y_combs=np.array(map(self.rank_diference,y_usar))
 
@@ -384,21 +394,23 @@ class OrdinalSM():
         #x: TEXTO
         #DTYPE: string
 
-        indices=self.indx
+        combinaciones=self.combs
         comparador= StringKernel()
         res=0
         valor = comparador._K(x, x)
-        for ind in indices:
-            par=self.combs[ind]
+        ind=0
+        for par in combinaciones:
 
-            res+=self.alpha[ind]*self.z[ind]*(comparador._K(par[0],x))/((comparador._K(par[0],par[0])*valor)**(1/2))-comparador._K(par[1],x)/((comparador._K(par[1],par[1])*valor)**(1/2))
-            #res += self.alpha[ind] * self.z[ind] *(self.kernel(par[0],x)-self.kernel(par[1],x))
+
+            #res+=self.alpha[ind]*self.Y_combs[ind]*(comparador._K(par[0],x))/((comparador._K(par[0],par[0])*valor)**(1/2))-comparador._K(par[1],x)/((comparador._K(par[1],par[1])*valor)**(1/2))
+            res += self.alpha[ind] * self.Y_combs[ind] *(self.kernel(par[0],x)-self.kernel(par[1],x))
+            ind += 1
 
         return res
 
     def crearTheta(self):
         x="hola"
-        lol=np.where(np.multiply(np.array(self.Z),np.array(map(self.mapeo,self.combs[:,0]))-np.array(self.mapeo,self.combs[:,1]))>=1)
+        lol=np.where(np.multiply(np.array(self.Z),np.array(map(self.mapeo,self.combs[:][0]))-np.array(map(self.mapeo,self.combs[:][1]))>=1))
 
 
 

@@ -271,7 +271,6 @@ def measure_coherence(Components):
     max_distanceCO = np.max(distance_matrixCO)
 
     Det_distance = np.linalg.det(distance_matrixEU)
-    np
     Clarck_and_Evans = np.sqrt(m) * (2) * (1 / m) * np.sum(R)
     Clarck_and_EvansCO = np.sqrt(m) * (2) * (1 / m) * np.sum(RCO)
 
@@ -392,7 +391,7 @@ def cost_function(X):
     return loss
 
 
-def otros_ensayos():
+def fotros_ensayos():
 
     filename = '/media/luis/Data/Universidad/Tesis (Natural language)/Training_Materials/training_set_rel3.xlsx'
 
@@ -433,6 +432,8 @@ def crearX(listaensayos, num_features):
         X[indx,:] =ko
 
     X[:,0]=(X[:,0])/np.std(X[:,0])
+
+
 
     return np.column_stack((np.ones((len(X[:,0]),1)),X))
 
