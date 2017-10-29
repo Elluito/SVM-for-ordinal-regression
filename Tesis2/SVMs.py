@@ -307,9 +307,11 @@ class OrdinalSM():
     def loss(self,alpha,a_old1,a_old2,y_1,y_2,x_1,x_2):
         comb=x_1
         comb2=x_2
+        s=y_2*y_1
         v_1=y_1*(self.mapeo(comb)-a_old1*y_1*(self.ordinal_kernel(comb,comb)) -a_old2*y_2*(self.ordinal_kernel(comb,comb2))  )
         v_2=y_2*(self.mapeo(comb2)-a_old2*y_2*(self.ordinal_kernel(comb2,comb2)) -a_old1*y_1*(self.ordinal_kernel(comb,comb2)))
-
+        res=alpha[0]*(1-y_1*v_1)+alpha[1]*(1-y_2*v_2)-(1/2)*self.ordinal_kernel(comb,comb)*((alpha[0])**2)-(1/2)*self.ordinal_kernel(comb2,comb2)*((alpha[1])**2)-(s*self.ordinal_kernel(comb,comb2))*alpha[0]*alpha[1]
+        return -res
 
 
 
@@ -343,8 +345,14 @@ class OrdinalSM():
         while o< max_iter:
 
             i,j=self.elegir_alpha()
-            self.l
+            options=(self.alpha[i],self.alpha[j],self.Y_combs[i],self.Y_combs[j],self.combs[i],self.combs[j])
 
+            s=self.Y_combs[i]*self.Y_combs[j]
+            ro=self.alpha[i]+s*self.alpha[j]
+            constrains = {'type': 'eq', 'fun': lambda x: x[0]+s*x[1]-ro}
+            bounds=[(0,self.C),(0,self.C)]
+            x_0=np.random_sample((2, 1)) * self.C
+            alphas=optimize.minimize(self.loss,x0=x_0,args=options,constraints=constrains,bounds=bounds).x
 
 
 
