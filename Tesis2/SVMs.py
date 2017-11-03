@@ -227,17 +227,20 @@ class StringKernel():
 class OrdinalSM():
 
 
-    def __init__(self,c):
+    def __init__(self,c,e=1e-3):
 
         self.C=c
-        self.sigma=2
+        self.sigma=10
         self.visitados=[]
-        self.e=1e-3
+        self.e=e
 
 
     def kernel(self,x1,x2):
 
-        return np.exp(((x1-x2).dot(x1-x2))/(2*self.sigma))
+        return np.exp(-(np.linalg.norm(x1-x2)**2)/(2*self.sigma**2))
+
+
+
     def rank_diference(self,comb):
         y1, y2=comb[0],comb[1]
         res=1 if y1 >y2 else -1
@@ -310,21 +313,21 @@ class OrdinalSM():
 
         alpha_i=None
         alpha_j=None
-        while alpha_i==None and indices!=[]:
-            potenial_alpha = np.random.choice(indices)
-            prueba=self.Y_combs[potenial_alpha]*self.mapeo(X[potenial_alpha])
-            if alpha[potenial_alpha]==0:
+
+        potenial_alpha = int(np.random.choice(indices,1))
+        prueba=self.Y_combs[potenial_alpha]*self.mapeo(X[potenial_alpha])
+        if alpha[potenial_alpha]==0:
                 # si la condicion de abajo se cumple significa que no cumple KKT y que es apto para optimizar
-                if prueba-1<-self.e:
+               if prueba-1<-self.e:
                     alpha_i=alpha[potenial_alpha]
                     self.visitados.append(potenial_alpha)
-            elif 0<alpha[potenial_alpha] and alpha[potenial_alpha]<self.C:
+        elif 0<alpha[potenial_alpha] and alpha[potenial_alpha]<self.C:
                 # si la condicion de abajo se cumple significa que no cumple KKT y que es apto para optimizar
 
                 if abs(prueba-1)>self.e:
                     alpha_i = alpha[potenial_alpha]
                     self.visitados.append(potenial_alpha)
-            elif alpha[potenial_alpha]==self.C:
+        elif alpha[potenial_alpha]==self.C:
                 # si la condicion de abajo se cumple significa que no cumple KKT y que es apto para optimizar
 
                 if prueba-1>self.e:
@@ -333,7 +336,7 @@ class OrdinalSM():
         alpha_j=self.alpha_j(self.visitados[-1],indices)
 
 
-        return potenial_alpha,alpha_i
+        return potenial_alpha,alpha_j
 
 
 
@@ -356,8 +359,72 @@ class OrdinalSM():
         res=alpha[0]*(1-y_1*v_1)+alpha[1]*(1-y_2*v_2)-(1/2)*self.ordinal_kernel(comb,comb)*((alpha[0])**2)-(1/2)*self.ordinal_kernel(comb2,comb2)*((alpha[1])**2)-(s*self.ordinal_kernel(comb,comb2))*alpha[0]*alpha[1]
         return -res
 
+    def obtener_combinaciones(self,textos,y):
+        import itertools
+        numbers=range(1,7,1)
+        x_res=[]
+        y_res=[]
+        for number in numbers:
+            if number==1:
+                indices1=(np.reshape(np.where(y==number+1)[0],[-1,1]))
+                indices2= (np.reshape(np.where(y==number)[0],[-1,1]))
+                temp=list(itertools.product(textos[indices1,:][:,0,:],textos[indices2,:][:,0,:]))
+                temp2=list(itertools.product(textos[indices2,:][:,0,:],textos[indices1,:][:,0,:]))
+                y_temp1=list(itertools.product(y[indices1],y[indices2]))
+                y_temp2=list(itertools.product(y[indices2],y[indices1]))
+                x_sub=np.vstack((temp,temp2))
+                y_sub=np.vstack((y_temp1,y_temp2))
 
 
+                x_res = x_sub
+                y_res = y_sub
+
+
+            elif number==6:
+                # indices1=np.reshape(np.where(y==number-1)[0],[-1,1])
+                # indices2=np.reshape(np.where(y==number)[0],[-1,1])
+                # temp = list(itertools.product(textos[indices1, :][:, 0, :], textos[indices2, :][:, 0, :]))
+                # temp2 = list(itertools.product(textos[indices2, :][:, 0, :], textos[indices1, :][:, 0, :]))
+                # y_temp1 = list(itertools.product(y[indices1], y[indices2]))
+                # y_temp2 = list(itertools.product(y[indices2], y[indices1]))
+                # x_sub = np.vstack((temp, temp2))
+                # y_sub = np.vstack((y_temp1, y_temp2))
+                #
+                # x_res = np.vstack((x_res, np.reshape(x_sub, [-1, 1])))
+                # y_res = np.vstack((y_res, np.reshape(y_sub, [-1, 1])))
+                continue
+
+            else:
+                # indices1=np.reshape(np.where(y==number-1)[0],[-1,1])
+                # indices2=np.reshape(np.where(y==number+1)[0],[-1,1])
+                # indices3=np.reshape(np.where(y==number)[0],[-1,1])
+                # temp1= list(itertools.product(textos[indices1, :][:, 0, :], textos[indices3, :][:, 0, :]))
+                # temp2=list(itertools.product(textos[indices3, :][:, 0, :], textos[indices1, :][:, 0, :]))
+                # temp3=list(itertools.product(textos[indices3, :][:, 0, :], textos[indices2, :][:, 0, :]))
+                # temp4=list(itertools.product(textos[indices2, :][:, 0, :], textos[indices3, :][:, 0, :]))
+                #
+                # ytemp1 = list(itertools.product(y[indices1], y[indices3]))
+                # ytemp2 = list(itertools.product(y[indices3], y[indices1]))
+                # ytemp3 = list(itertools.product(y[indices3], y[indices2]))
+                # ytemp4 = list(itertools.product(y[indices2], y[indices3]))
+                #
+                # x_sub=np.vstack((np.vstack((temp1,temp2)),np.vstack((temp3,temp4))))
+                # y_sub=np.vstack((np.vstack((ytemp1,ytemp2)),np.vstack((ytemp3,ytemp4))))
+                # x_res = np.vstack((x_res, np.reshape(x_sub, [-1, 1])))
+                # y_res = np.vstack((y_res, np.reshape(y_sub, [-1, 1])))
+                indices1 = (np.reshape(np.where(y == number + 1)[0], [-1, 1]))
+                indices2 = (np.reshape(np.where(y == number)[0], [-1, 1]))
+                temp = list(itertools.product(textos[indices1, :][:, 0, :], textos[indices2, :][:, 0, :]))
+                temp2 = list(itertools.product(textos[indices2, :][:, 0, :], textos[indices1, :][:, 0, :]))
+                y_temp1 = list(itertools.product(y[indices1], y[indices2]))
+                y_temp2 = list(itertools.product(y[indices2], y[indices1]))
+                x_sub = np.vstack((temp, temp2))
+                y_sub = np.vstack((y_temp1, y_temp2))
+
+                x_res = np.vstack((x_res,x_sub))
+                y_res = np.vstack((y_res,y_sub))
+
+        return x_res,y_res
 
 
 
@@ -366,14 +433,13 @@ class OrdinalSM():
     def fit(self,textos,y):
         import itertools
         import  sys
-        coso = itertools.permutations(textos, textos)
+        np.place(textos,np.isnan(textos),0)
+        self.comb,y_usar=self.obtener_combinaciones(textos,y)
 
-        y_usar = list(itertools.permutations(y, y))
-        self.combs=list(coso)
-        self.Y_combs=np.array(map(self.rank_diference,y_usar))
+        self.Y_combs=np.array(list(map(self.rank_diference,y_usar)))
 
 
-        combinaciones=list(self.combs)
+
         sys.setrecursionlimit(10000)
         
         #comparador =SubsequenceStringKernel()
@@ -385,12 +451,12 @@ class OrdinalSM():
         #combs_usar=self.combs[utiles]
         #y_usar=y_usar[utiles]
         
-        self.alpha=np.random_sample((len(y_usar),1))*self.C
+        self.alpha=np.random.random_sample((len(y_usar),1))*self.C
         self.todos_los_indices = set(range(0, len(self.alpha)))
 
         while o!=0:
 
-            i,j=self.elegir_alpha(self.alpha)
+            i,j=self.elegir_alpha(self.alpha,self.combs)
             options=(self.alpha[i],self.alpha[j],self.Y_combs[i],self.Y_combs[j],self.combs[i],self.combs[j])
 
             s=self.Y_combs[i]*self.Y_combs[j]
@@ -450,17 +516,25 @@ class OrdinalSM():
         #DTYPE: string
 
         combinaciones=self.combs
-        comparador= StringKernel()
         res=0
-        valor = comparador._K(x, x)
+        #valor = comparador._K(x, x)
         ind=0
-        for par in combinaciones:
+
+        if len(x)==20:
+
+            for par in combinaciones:
 
 
-            #res+=self.alpha[ind]*self.Y_combs[ind]*(comparador._K(par[0],x))/((comparador._K(par[0],par[0])*valor)**(1/2))-comparador._K(par[1],x)/((comparador._K(par[1],par[1])*valor)**(1/2))
-            res += self.alpha[ind] * self.Y_combs[ind] *(self.kernel(par[0],x)-self.kernel(par[1],x))
-            ind += 1
+                #res+=self.alpha[ind]*self.Y_combs[ind]*(comparador._K(par[0],x))/((comparador._K(par[0],par[0])*valor)**(1/2))-comparador._K(par[1],x)/((comparador._K(par[1],par[1])*valor)**(1/2))
+                res += self.alpha[ind] * self.Y_combs[ind] *(self.kernel(par[0],x)-self.kernel(par[1],x))
+                ind += 1
+        else:
+            for par in combinaciones:
+                # res+=self.alpha[ind]*self.Y_combs[ind]*(comparador._K(par[0],x))/((comparador._K(par[0],par[0])*valor)**(1/2))-comparador._K(par[1],x)/((comparador._K(par[1],par[1])*valor)**(1/2))
+                res += self.alpha[ind] * self.Y_combs[ind] * (self.ordinal_kernel(par,x))
 
+
+                ind += 1
         return res
 
     def crearTheta(self):

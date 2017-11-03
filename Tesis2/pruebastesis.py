@@ -407,7 +407,7 @@ def otros_ensayos():
     # for ensayo in coso:
     #     Textos = Textos + ensayo
     #
-    # return Textos, list(coso), y
+    return list(coso), y
 
 
 def extraer(text):
@@ -431,7 +431,7 @@ def crearX(listaensayos, num_features):
             continue
         X[indx,:] =ko
         #Normalizo
-    X=(X-np.mean(X,0))/np.std(X,0)
+    X[:,0]=(X[:,0])/np.std(X[:,0])
 
 
 
@@ -630,18 +630,16 @@ class clasificador():
 
 #############################################################################################
 #a = np.array(np.mat('1 0 1 0 0 0;0 1 0 0 0 0;1 1 0 0 0 0;1 0 0 1 1 0;0 0 0 1 0 1'))
-textos, textos_sep, y1 = otros_ensayos()
+#textos_sep, y1 = otros_ensayos()
 el_respectivo=OrdinalSM(50)
 #X_train,X_test,y_train,y_test=train_test_split(textos_sep,y1,train_size=0.8)
 
 
 
 
+#X = crearX(textos_sep,num_features=19)
+#np.save('/home/luis/Tesis2/X',X)
 
-# frases,parrafos,palabras = extraerymmostrar(mode='todos')
-# xs,ys,matrix_reduce,matrix=LSA(frases)
-X = crearX(textos_sep,num_features=19)
-np.save('/home/luis/Tesis2/X',X)
 #
 # mr_plot=TSNE(n_components=2,random_state=np.random.rand(1))
 # ahorasi=mr_plot.fit_transform(X)
@@ -673,6 +671,17 @@ np.save('/home/luis/Tesis2/X',X)
 # plt.show()
 #
 #
+X=np.load('/home/luis/Tesis2/X.npy')
+filename = '/media/luis/Data/Universidad/Tesis (Natural language)/Training_Materials/training_set_rel3.xlsx'
+
+archivo = pd.ExcelFile(filename, header=0)
+Tabla = archivo.parse(sheetname='training_set')
+set = np.array(Tabla['essay_set'])
+index = np.where(set > 1)[0][0]
+
+y1 = np.array(Tabla['rater1_domain1'].iloc[:index], dtype=int)
+#Saco todos los ensayos y los pongo en un solo string
+
 X_train,X_test,y_train,y_test=train_test_split(X,y1,train_size=0.8)
 el_respectivo.fit(X_train,y_train)
 el_respectivo.crearTheta()
