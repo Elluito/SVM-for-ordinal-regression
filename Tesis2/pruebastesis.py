@@ -691,17 +691,14 @@ el_respectivo.crearTheta()
 #
 #
 #
-# #w,b=PRank(X,y)
-# #X_test,y_test=crearX_prueba(11)
-# #porcentaje=test_PRank(w,b,X_test,y_test)
-# #print("MI propio algoritmo con juegos de azar y mujerzuelas: %f :D"%porcentaje)
-# # U,S,P=np.linalg.svd(a,full_matrices=1)
-# # U2,S2,P2=np.linalg.svd(a,full_matrices=0)
 #
 #
-# #W, theta = ordinal_logistic_fit(X, y, alpha=0)
 #
-# # ####################Pruebo la regresion logistica############
+#
+#
+#
+#
+#  ####################Pruebo la regresion logistica############
 # print("Regresion  Ordinal Logistica")
 # z=LogisticIT(alpha=0.1, verbose=0)
 # #
@@ -726,7 +723,7 @@ el_respectivo.crearTheta()
 #
 # print("Ahora mi propio clasificador")
 #
-# C_de_prueba=range(5,30,5)
+# C_de_prueba=range(1,10000,100)
 #
 #
 # el_que_es=clasificador(1,6)
@@ -744,15 +741,21 @@ el_respectivo.crearTheta()
 #     X_test[-1,:]=temp
 #     y_train[-1]=y_temp1
 #     y_test[indx]=y_temp
+#Pruebo cual C es mejor
 # for c in C_de_prueba:
 #     print("Con C : %i"%c)
 #     el_que_es.fit(X_train,y_train,c)
 #     y_out=el_que_es.predict(X_test)
 #     k=weigthed_Kappa(y_test,y_out,1,6)
-#     print("El indicador kappa: %0.3f"%k)
+#     
 #     porcentaje,_,_,_=probar_Test_set(X_test,y_test,el_que_es)
-#     print("Porcentajes: "+str(porcentaje)+"\n")
-#
+#     por,acum,errores=Cross_val(X_train,y_train)
+#     por_crosval=np.averange(por)
+#     print("Weigthed-Kappa con C = %i:%0.5f"%(c,k))
+#     print("Porcentaje en test con C = %i: %0.5f"%(c,porcentaje))
+#     print("Promedio porcentaje en Cross-Validation con C=%i : %0.5f \n"%(por_crosval)) 
+             
+
 #
 #
 #
@@ -766,11 +769,11 @@ el_respectivo.crearTheta()
 #
 # #diferentes gaussianos
 #
-# gauss= GaussianProcessClassifier(n_restarts_optimizer=0)
+# gauss= GaussianProcessClassifier()
 # gauss.fit(X_train,y_train)
 # y_predicho = gauss.predict(X_test)
 # k = weigthed_Kappa(y_test,y_predicho,1,6)
-# print("#######Proceso Gaussiano con  %i reinicios ##############\n"%1)
+# print("#######Proceso Gaussiano con  %i reinicios ##############\n"%0)
 # print("Indicador appa: %0.5f" % k)
 # porcentaje, _, _, _ = probar_Test_set(X_test, y_test, gauss)
 # print("Porcentajes " + str(porcentaje) + "\n")
@@ -784,43 +787,3 @@ el_respectivo.crearTheta()
 #
 #
 #
-#
-#
-
-
-
-
-
-
-
-
-##filename=filedialogaskopenfilename(initialdir = '/home/alfredo/Ensayos')
-# root.destroy()
-# testo=getText(filename)
-# palabrasp,frasesp,parrafosp=extraer(testo)
-
-# matrixp=myLSA(frasesp,palabrasp)
-# kp=componentesprincipales(matrixp)
-# print("Componentes usadas:"+str(kp))
-# xs,ys,componentsp,mirar=LSA(frasesp,kp)
-
-
-#porcentaje,aver,acum,errores = probar_Test_set(z)
-#print("LogisticIT: "+str(porcentaje))
-
-
-#porcentajes, acumulados,err=Cross_val(X,y_train,z)
-
-
-#print("Acumulados: "+str(acumulados)+"\n")
-#print("Errores: "+str(err)+"\n")
-
-
-
-# RESPUESTA=ordinal_logistic_predict(W,theta,measure_coherence(Components=componentsp))
-# print(RESPUESTA)
-
-# euclidiana,cosenoidal,min_distance,max_distance,averminn,Clarck_Evans=measure_coherence(components)
-# print("Distancia euclidiana entre frases adyacentes: "+str(euclidiana)+" Distancia promedio cosenoidal entre frases adyacentes: "+str(cosenoidal))
-# spatial_measure(components)
-# plot(mirar,frases)
