@@ -20,8 +20,8 @@ import matplotlib
 
 import glob
 import os
-import tkinter as tk
-from tkinter import filedialog
+#import tkinter as tk
+#from tkinter import filedialog
 #import tensorflow as tf
 from Ordnilaregression import *
 #from tabulate import tabulate
@@ -73,77 +73,77 @@ def sigmoid(Z):
     return out
 
 
-def extraerymmostrar(mode):
-    if mode == 'todos':
-        path = '/home/alfredo/Ensayos'
-        datos = []
-        lol = 0
-
-        for filename in glob.glob(os.path.join(path, '*.docx')):
-
-            texto = getText(filename)
-            if lol == 0:
-                frases = nltk.sent_tokenize(texto, 'spanish')
-                parrafos = texto.split("\n")
-                palabras = texto.split()
-                lol = 1
-            else:
-                frases = frases + nltk.sent_tokenize(texto, 'spanish')
-                parrafos = parrafos + texto.split("\n")
-                palabras = palabras + texto.split()
-
-            print("Documento procesado: " + filename + "\n\n")
-            print(texto + "\n\n")
-            op = texto.split()
-            print(op.__len__())
-            V = set(op)
-            print("Vocabulario: " + str(V))
-            print("Tamano Vocabulario: " + str(V.__len__()))
-
-            largoletras = [len(w) for w in op]
-            print("Tamano de cada letra: " + str(largoletras))
-            dist = nltk.FreqDist(largoletras)
-            print(dist)
-            tamanoletramasusada = dist.max()
-            print("tamano de letra mas comun: " + str(tamanoletramasusada))
-            dislargas = dist.keys()
-            promedio = np.mean(np.array(list(dislargas)))
-            print("Largo pormedio: " + str(promedio))
-            lol = [w for w in V if len(w) > promedio]
-            print("Palabras largas: " + str(lol) + "\n\n")
-
-        return frases, parrafos, palabras
-    else:
-        root = tk.Tk()
-        filename = filedialog.askopenfilename(initialdir='/home/alfredo/Ensayos')
-        root.destroy()
-
-        texto = getText(filename)
-        frases = nltk.sent_tokenize(texto, 'spanish')
-        parrafos = texto.split("\n")
-        palabras = texto.split()
-
-        print("Documento procesado: " + filename + "\n\n")
-        print(texto + "\n\n")
-        op = texto.split()
-        print(op.__len__())
-        V = set(op)
-        print("Vocabulario: " + str(V))
-        print("Tamano Vocabulario: " + str(V.__len__()))
-
-        largoletras = [len(w) for w in op]
-        print("Tamano de cada letra: " + str(largoletras))
-        dist = nltk.FreqDist(largoletras)
-        print(dist)
-        tamanoletramasusada = dist.max()
-        print("tamano de letra mas comun: " + str(tamanoletramasusada))
-        dislargas = dist.keys()
-        promedio = np.mean(np.array(list(dislargas)))
-        print("Largo pormedio: " + str(promedio))
-        lol = [w for w in V if len(w) > promedio]
-        print("Palabras largas: " + str(lol) + "\n\n")
-
-        return frases, parrafos, palabras
+# def extraerymmostrar(mode):
+#     if mode == 'todos':
+#         path = '/home/alfredo/Ensayos'
+#         datos = []
+#         lol = 0
+#
+#         for filename in glob.glob(os.path.join(path, '*.docx')):
+#
+#             texto = getText(filename)
+#             if lol == 0:
+#                 frases = nltk.sent_tokenize(texto, 'spanish')
+#                 parrafos = texto.split("\n")
+#                 palabras = texto.split()
+#                 lol = 1
+#             else:
+#                 frases = frases + nltk.sent_tokenize(texto, 'spanish')
+#                 parrafos = parrafos + texto.split("\n")
+#                 palabras = palabras + texto.split()
+#
+#             print("Documento procesado: " + filename + "\n\n")
+#             print(texto + "\n\n")
+#             op = texto.split()
+#             print(op.__len__())
+#             V = set(op)
+#             print("Vocabulario: " + str(V))
+#             print("Tamano Vocabulario: " + str(V.__len__()))
+#
+#             largoletras = [len(w) for w in op]
+#             print("Tamano de cada letra: " + str(largoletras))
+#             dist = nltk.FreqDist(largoletras)
+#             print(dist)
+#             tamanoletramasusada = dist.max()
+#             print("tamano de letra mas comun: " + str(tamanoletramasusada))
+#             dislargas = dist.keys()
+#             promedio = np.mean(np.array(list(dislargas)))
+#             print("Largo pormedio: " + str(promedio))
+#             lol = [w for w in V if len(w) > promedio]
+#             print("Palabras largas: " + str(lol) + "\n\n")
+#
+#         return frases, parrafos, palabras
+#     else:
+#         root = tk.Tk()
+#         filename = filedialog.askopenfilename(initialdir='/home/alfredo/Ensayos')
+#         root.destroy()
+#
+#         texto = getText(filename)
+#         frases = nltk.sent_tokenize(texto, 'spanish')
+#         parrafos = texto.split("\n")
+#         palabras = texto.split()
+#
+#         print("Documento procesado: " + filename + "\n\n")
+#         print(texto + "\n\n")
+#         op = texto.split()
+#         print(op.__len__())
+#         V = set(op)
+#         print("Vocabulario: " + str(V))
+#         print("Tamano Vocabulario: " + str(V.__len__()))
+#
+#         largoletras = [len(w) for w in op]
+#         print("Tamano de cada letra: " + str(largoletras))
+#         dist = nltk.FreqDist(largoletras)
+#         print(dist)
+#         tamanoletramasusada = dist.max()
+#         print("tamano de letra mas comun: " + str(tamanoletramasusada))
+#         dislargas = dist.keys()
+#         promedio = np.mean(np.array(list(dislargas)))
+#         print("Largo pormedio: " + str(promedio))
+#         lol = [w for w in V if len(w) > promedio]
+#         print("Palabras largas: " + str(lol) + "\n\n")
+#
+#         return frases, parrafos, palabras
 
 
 # funcion que devuelve la matriz frase palabra
@@ -675,7 +675,7 @@ X=np.load('/home/luis/Tesis2/X.npy')
 filename = '/media/luis/Data/Universidad/Tesis (Natural language)/Training_Materials/training_set_rel3.xlsx'
 
 archivo = pd.ExcelFile(filename, header=0)
-Tabla = archivo.parse(sheetname='training_set')
+Tabla = archivo.parse(sheet_name=0)
 set = np.array(Tabla['essay_set'])
 index = np.where(set > 1)[0][0]
 
