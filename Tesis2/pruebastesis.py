@@ -700,6 +700,8 @@ el_respectivo.crearTheta()
 #
 #  ####################Pruebo la regresion logistica############
 # print("Regresion  Ordinal Logistica")
+vvalores_alpha=np.linspace
+
 # z=LogisticIT(alpha=0.1, verbose=0)
 # #
 # #
@@ -721,12 +723,12 @@ el_respectivo.crearTheta()
 # porcentaje,_,_,_=probar_Test_set(X_test,y_test,arbol)
 # print("Porcentajes: "+str(porcentaje)+"\n")
 #
-# print("Ahora mi propio clasificador")
+##################### print("Ahora mi propio clasificador")
 #
 # C_de_prueba=range(1,10000,100)
 #
 #
-# el_que_es=clasificador(1,6)
+# 
 #
 #
 #
@@ -742,11 +744,18 @@ el_respectivo.crearTheta()
 #     y_train[-1]=y_temp1
 #     y_test[indx]=y_temp
 #Pruebo cual C es mejor
+mejor=0
+mejor_C=0
 # for c in C_de_prueba:
 #     print("Con C : %i"%c)
+#     el_que_es=clasificador(1,6)
 #     el_que_es.fit(X_train,y_train,c)
 #     y_out=el_que_es.predict(X_test)
 #     k=weigthed_Kappa(y_test,y_out,1,6)
+#     if mejor<k:
+#       mejor=k
+#        mejor_C=c
+#       
 #     
 #     porcentaje,_,_,_=probar_Test_set(X_test,y_test,el_que_es)
 #     por,acum,errores=Cross_val(X_train,y_train)
