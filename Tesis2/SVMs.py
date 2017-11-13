@@ -285,7 +285,10 @@ class OrdinalSM():
         print "Tamano de alpha %i"%len(self.alpha)
         todos=list(self.todos_los_indices)
         epsilon=10e-3
-
+        alpha1=np.random.random(len(y_usar))*self.C
+        aplha_new=self.ordinal_kernel(sefl.combs[0])-self.alpha[0]
+        alpha2=
+        
 
 
 
