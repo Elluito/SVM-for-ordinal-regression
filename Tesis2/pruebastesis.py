@@ -684,7 +684,7 @@ y1 = np.array(Tabla['rater1_domain1'].iloc[:index], dtype=int)
 
 X_train,X_test,y_train,y_test=train_test_split(X,y1,train_size=0.8)
 el_respectivo.fit(X_train,y_train)
-el_respectivo.crearTheta()
+#el_respectivo.crearTheta()
 
 
 

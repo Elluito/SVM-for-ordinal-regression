@@ -18,12 +18,13 @@ from scipy import optimize
 class OrdinalSM():
 
 
-    def __init__(self,c,e=1e-3):
+    def __init__(self,c,e=10e-3):
 
         self.C=c
         self.sigma=10
         self.visitados=[]
         self.e=e
+
 
 
     def kernel(self,x1,x2):
@@ -50,13 +51,13 @@ class OrdinalSM():
 
         import itertools
         #calculo solo los elementos de la diagonal superior puesto que la matriz es diagonal
-        matriz=[]
+
         for i in range(len(combs)):
             comb=combs[i]
             temp=[]
             for j in range(i, len(combs)):
                 comb2=combs[j]
-                temp.append(temp.append(self.kernel(comb[0],comb2[0])-self.kernel(comb[0],comb2[1])-self.kernel(comb[1],comb2[0])+self.kernel(comb[1],comb2[1])))
+                temp.append(self.ordinal_kernel(comb,comb2))
 
             matriz.append(temp)
         #realizo la multiplicacion
@@ -86,33 +87,25 @@ class OrdinalSM():
 
     def probar_KKT(self):
         temp=list(self.todos_los_indices)
-        p=list(map(self.fun,temp))
+        p=np.array(list(map(self.fun,temp)))
         indices_malos=np.where(p==0)[0]
 
 
         return indices_malos
-    def alpha_j(self,i,posibles_indices):
+    def alpha_j(self,elem):
 
-        E_i=self.mapeo(self.combs[i])-self.Y_combs[i]
-        max=0
-        indice=None
+        E_j=self.mapeo(self.combs[elem])-self.Y_combs[elem]
+        return self.E_i-E_j
 
-        for j in posibles_indices:
-            if j!=i:
-                E_j=self.mapeo(self.combs[j])-self.Y_combs[j]
-                temp=E_i-E_j
-                if abs(temp)>max:
-                    max=temp
-                    indice=j
 
-            else:
-                continue
-        return indice
 
     #escojo el par de $\alpha's$ que voy a omptimizar
     def elegir_alpha(self,alpha,X):
         #Escojo el primer indice
         indices=list(self.todos_los_indices-set(self.visitados))
+        if len(indices)==0:
+            return 0, 0
+
 
         alpha_i=None
         alpha_j=None
@@ -240,7 +233,7 @@ class OrdinalSM():
                 indices2 = (np.reshape(np.where(y == number)[0], [-1, 1]))
                 temp = np.array(list(itertools.product(textos[indices1, :][:, 0, :], textos[indices2, :][:, 0, :])))
                 temp2 = np.array(list(itertools.product(textos[indices2, :][:, 0, :], textos[indices1, :][:, 0, :])))
-                sections = np.random.randint(0, len(temp), 500)
+                sections = np.random.randint(0, len(temp), 100)
                 temp= temp[sections, :, :]
                 temp2=temp2[sections, :, :]
                 #temp=temp[]
@@ -278,11 +271,11 @@ class OrdinalSM():
         Q=np.zeros((len(y_usar),len(y_usar)))
         #comparador =SubsequenceStringKernel()
         
-        MAX_ITER=100
+        MAX_ITER=1000
         #gram_matrix=comparador.string_kernel(textos,textos)
-        o = 1
+        o = 0
 
-        self.alpha=np.random.random_sample((len(y_usar),1))*self.C
+        self.alpha=np.ones((len(y_usar),1))
         self.todos_los_indices = set(range(0, len(self.alpha)))
         #self.probar_KKT(self.alpha)
         s=t.clock()
@@ -290,61 +283,99 @@ class OrdinalSM():
         e=t.clock()
         print "tiempo en hacer 1 mapeo: %0.5f"%(e-s)
         print "Tamano de alpha %i"%len(self.alpha)
-
-        while 1:
-
-            i,j=self.elegir_alpha(self.alpha,self.combs)
-            #options=(self.alpha[i],self.alpha[j],self.Y_combs[i],self.Y_combs[j],self.combs[i],self.combs[j])
-
-            s=self.Y_combs[i]*self.Y_combs[j]
-            #ro=self.alpha[i]+s*self.alpha[j]
-            #constrains = {'type': 'eq', 'fun': lambda x: x[0]+s*x[1]-ro}
-            #bounds=[(0,self.C),(0,self.C)]
-            #x_0=np.random.random_sample((2, 1)) * self.C
-
-            # Utilizo el optimizador
-            #alphas=optimize.minimize(self.loss,x0=x_0,args=options,constraints=constrains,bounds=bounds).x
-            #Lo hago analiticamente
-            E_i=self.mapeo(self.combs[i])-self.Y_combs[i]
-            E_j=self.mapeo(self.combs[j])-self.Y_combs[j]-self.ordinal_kernel(self.combs[i],self.combs[j])
-            n=-(2*self.ordinal_kernel(self.combs[i],self.combs[j])-self.ordinal_kernel(self.combs[i],self.combs[i])-self.ordinal_kernel(self.combs[j],self.combs[j]))
-            a_j_new=self.alpha[j]-(self.Y_combs[j]*E_i-E_j)/n
-            H=max((0,self.alpha[j]-self.alpha[i])) if self.Y_combs[i]!=self.Y_combs[j] else max((0,self.alpha[j]-self.alpha[i]-self.C))
-            L=min((self.C,self.alpha[j]-self.alpha[i])) if self.Y_combs[i]!=self.Y_combs[j] else min((self.C,self.alpha[j]+self.alpha[i]-self.C))
-            if a_j_new>=H:
-                a_j_new_clip=H
-            elif L< a_j_new and a_j_new<H :
-                a_j_new_clip=a_j_new
-            elif a_j_new<=L:
-                a_j_new_clip=L
-            a_i_new=self.alpha[i]+s*(self.alpha[j]-a_j_new_clip)
-
-            self.alpha[i]=a_i_new
-            self.alpha[j]=a_j_new_clip
-
-            if len(self.visitados)==len(self.alpha):
-                print "Ya acabe, probare KKT en todos los datos"
-                start=t.clock()
-                probar=self.probar_KKT()
-                end=t.clock()
-                print "tiempo en probar KKT: %0.5f"%(end-start)
-                print len(probar)
-                #nada=input("Enter para continuar")
-                if len(probar)==0 or o==MAX_ITER:
-                    break
-                elif len(self.visitados)==len(self.alpha):
-                    print  "Si hay datos que no lo cumplen los vulevo a meter en la bolsa de posibles valores"
-                    self.visitados=list(set(self.visitados)-set(probar))
-                    o+=1
-                    print "Veces que he visitado los datos: %i"%o
-
-        print len(self.probar_KKT())
-        print "Termine"
+        todos=list(self.todos_los_indices)
+        epsilon=10e-3
 
 
-        # boundes=[]
-        # print "%i"%len(self.combs)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        # while 1:
+        #     for i in todos:
         #
+        #         #self.E_i=E_i
+        #         j=int(np.random.randint(0,len(self.alpha),1))
+        #         while j==i:
+        #             j=int(np.random.randint(0,len(self.alpha),1))
+        #
+        #
+        #         #i,j=self.elegir_alpha(self.alpha,self.combs)
+        #         #t1=t.clock()
+        #         #j=np.argmax(np.array(list(map(self.alpha_j,todos))))
+        #         #t2=t.clock()
+        #         #print "tiempo en hallar el ideal: %0.9f"%(t2-t1)
+        #
+        #         #options=(self.alpha[i],self.alpha[j],self.Y_combs[i],self.Y_combs[j],self.combs[i],self.combs[j])
+        #
+        #         s=self.Y_combs[i]*self.Y_combs[j]
+        #         #ro=self.alpha[i]+s*self.alpha[j]
+        #         #constrains = {'type': 'eq', 'fun': lambda x: x[0]+s*x[1]-ro}
+        #         #bounds=[(0,self.C),(0,self.C)]
+        #         #x_0=np.random.random_sample((2, 1)) * self.C
+        #
+        #         # Utilizo el optimizador
+        #         #alphas=optimize.minimize(self.loss,x0=x_0,args=options,constraints=constrains,bounds=bounds).x
+        #         #Lo hago analiticamente
+        #
+        #         E_i = self.mapeo(self.combs[i]) - self.Y_combs[i]
+        #
+        #         E_j=self.mapeo(self.combs[j])-self.Y_combs[j]
+        #
+        #         n=(self.ordinal_kernel(self.combs[i],self.combs[i])+self.ordinal_kernel(self.combs[j],self.combs[j])-2*self.ordinal_kernel(self.combs[i],self.combs[j]))
+        #         if n==0:
+        #             continue
+        #         a_j_new=self.alpha[j]-float(self.Y_combs[j]*E_i-E_j)/n
+        #
+        #         H= min((self.C,self.C+(self.alpha[j]-self.alpha[i]))) if self.Y_combs[i]!=self.Y_combs[j] else min((self.C,self.alpha[j]+self.alpha[i]))
+        #         L=  max((0,self.alpha[j]-self.alpha[i])) if self.Y_combs[i]!=self.Y_combs[j] else  max((0,self.alpha[j]+self.alpha[i]-self.C))
+        #         if a_j_new>=H:
+        #             a_j_new_clip=H
+        #         elif L< a_j_new and a_j_new<H :
+        #             a_j_new_clip=a_j_new
+        #         elif a_j_new<=L:
+        #             a_j_new_clip=L
+        #         a_i_new=self.alpha[i]+s*(self.alpha[j]-a_j_new_clip)
+        #
+        #         self.alpha[i]=a_i_new
+        #         self.alpha[j]=a_j_new_clip
+        #
+        #     print "Ya acabe, probare KKT en todos los datos"
+        #     start=t.clock()
+        #     probar=self.probar_KKT()
+        #     end=t.clock()
+        #     print "tiempo en probar KKT: %0.5f"%(end-start)
+        #     print len(probar)
+        #     #nada=input("Enter para continuar")
+        #     if len(probar)==0 or o==MAX_ITER:
+        #         break
+        #     else:
+        #         print  "Si hay datos que no lo cumplen los vulevo a meter en la bolsa de posibles valores"
+        #         self.visitados=list(set(self.visitados)-set(probar))
+        #         #alpha = self.alpha.copy()
+        #         o+=1
+        #         print "Veces que he visitado los datos: %i"%o
+        #
+        # print len(self.probar_KKT())
+        # print "Termine"
+        #
+        # np.save('/home/luis/alphas',self.alpha)
+        # boundes=[]
+        # # print "%i"%len(self.combs)
+        # #
         # start=t.clock()
         # for i, comb in enumerate(self.combs):
         #      boundes.append((0, self.C))
@@ -356,10 +387,7 @@ class OrdinalSM():
         #          #temp.append(comparador._K(s=comb[0], t=comb2[0]) / ((comparador._K(s=comb[0], t=comb[0]) * comparador._K(s=comb2[0], t=comb2[0])) ** (1/ 2)) - comparador._K(s=comb[0], t=comb2[1]) / (( comparador._K(s=comb[0], t=comb[0]) * comparador._K(s=comb2[1], t=comb2[1]))** (1 / 2)) - comparador._K(s=comb[1], t=comb2[0]) / ( ( comparador._K(s=comb[1], t=comb[1]) * comparador._K(s=comb2[0], t=comb2[0])) ** (1 / 2)) + comparador._K(s=comb2[1], t=comb[1]) / (( comparador._K(s=comb2[1], t=comb2[1]) * comparador._K(s=comb[1], t=comb[1])) ** (1 / 2)))
         #              Q[i,j]=self.kernel(comb[0],comb2[0])-self.kernel(comb[0],comb2[1])-self.kernel(comb[1],comb2[0])+self.kernel(comb[1],comb2[1])
         #              Q[j,i]=Q[i,j]
-        #
-        # end=t.clock()
-        # print "Tiemop en crear la matriz: %0.5f"%(end-start)
-        #
+
         # constrains = {'type': 'eq', 'fun': lambda x: x.dot(np.array(self.Y_combs))}
         # options=(Q)
         # x_0=np.random.random_sample((len(y_usar),1))*self.C
@@ -411,31 +439,14 @@ class OrdinalSM():
         return res
 
     def crearTheta(self):
-        x="hola"
-        lol=np.where(np.multiply(np.array(self.Z),np.array(map(self.mapeo,self.combs[:][0]))-np.array(map(self.mapeo,self.combs[:][1]))>=1))
 
 
 
-        nada=0
+
+
 
         theta={}
         calificaciones =range(1,6,1)
-        for rank in calificaciones:
-            temp = []
-            for indx in self.indx:
-                par=self.Y_combs[indx]
-
-                if par[0]-par[1]==1:
-                    temp.append(self.combs[indx])
-
-
-
-            theta[rank]=temp
-        tresholds={}
-        for key, lista in theta.items():
-            coso=self.aux_fun(np.array(lista))
-            mejor_comb=lista[np.argmin(coso)]
-            tresholds[key]=(self.mapeo(mejor_comb[0])+self.mapeo(mejor_comb[1]))/2
 
 
         self.umbrales=tresholds
