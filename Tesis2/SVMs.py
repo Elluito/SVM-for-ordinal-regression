@@ -47,19 +47,17 @@ class OrdinalSM():
 
 
         return res
-    def calcular_gradient(self,alpha,combs):
+    def calcular_gradient(self,p):
 
         import itertools
         #calculo solo los elementos de la diagonal superior puesto que la matriz es diagonal
+        res=0
+        a_p=self.alpha[p]
+        for i, a in enumerate(self.alpha):
+            res+=self.Y_combs[p]*self.Y_combs[i]*self.ordinal_kernel(self.combs[p],self.combs[i])*a
 
-        for i in range(len(combs)):
-            comb=combs[i]
-            temp=[]
-            for j in range(i, len(combs)):
-                comb2=combs[j]
-                temp.append(self.ordinal_kernel(comb,comb2))
+        return res-1
 
-            matriz.append(temp)
         #realizo la multiplicacion
     def fun(self,i):
         a=self.alpha[i]
@@ -286,8 +284,8 @@ class OrdinalSM():
         todos=list(self.todos_los_indices)
         epsilon=10e-3
         alpha1=np.random.random(len(y_usar))*self.C
-        aplha_new=self.ordinal_kernel(sefl.combs[0])-self.alpha[0]
-        alpha2=
+        aplha_new=self.calcular_gradient(0)
+
         
 
 
