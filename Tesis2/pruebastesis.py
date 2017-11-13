@@ -577,8 +577,10 @@ def change_y(y,clase):
 
 class clasificador():
 
-    def __init__(self, min, max):
+    def __init__(self, min, max, gamma,C):
         self.clases = range(min,max+1,1)
+        self.gamma=gamma
+        self.C_i=C
 
         # for elem in self.clases:
         #     if  elem==5 or elem==4 or elem==12 or elem==2:
@@ -591,7 +593,7 @@ class clasificador():
 
 
 
-    def fit(self,X_train,y_train,C_i):
+    def fit(self,X_train,y_train):
         pesos_clases={}
 
         for i,clase in enumerate(self.clases):
@@ -602,7 +604,7 @@ class clasificador():
                 pesos_clases[int(clase)]=30
 
         self.options=pesos_clases
-        self.clasificador=SVC(C=C_i,class_weight=self.options)
+        self.clasificador=SVC(C=self.C_i,class_weight=self.options)
         self.clasificador.fit(X_train,y_train)
 
     def predict(self,X_test):
@@ -743,6 +745,11 @@ vvalores_alpha=np.linspace
 #     X_test[-1,:]=temp
 #     y_train[-1]=y_temp1
 #     y_test[indx]=y_temp
+
+
+
+############## Debo hacer un  GridSearch para C y para Gamma #################
+
 #Pruebo cual C es mejor
 mejor=0
 mejor_C=0
