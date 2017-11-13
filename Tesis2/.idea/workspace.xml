@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="049de013-23ad-41db-9792-4e4e9a20af23" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SVMs.py" afterPath="$PROJECT_DIR$/SVMs.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pruebastesis.py" afterPath="$PROJECT_DIR$/pruebastesis.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -375,7 +373,14 @@
       <option name="project" value="LOCAL" />
       <updated>1510119464115</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Demás cosas">
+      <created>1510537332881</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1510537332881</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TodoView">
@@ -454,7 +459,8 @@
     <MESSAGE value="Solo cojo las paerejas que me sirven de los datos,conseguí 900,000 datos por otro lado si esto no resulta puedo hacer varias regresiones ordinales en intervalos de los rangos." />
     <MESSAGE value="cosas" />
     <MESSAGE value="Borré lo incesasario" />
-    <option name="LAST_COMMIT_MESSAGE" value="Borré lo incesasario" />
+    <MESSAGE value="Demás cosas" />
+    <option name="LAST_COMMIT_MESSAGE" value="Demás cosas" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
